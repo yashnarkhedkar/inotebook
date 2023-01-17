@@ -1,0 +1,21 @@
+.red{
+  color : red;  
+}
+.div-center {
+  width: 400px;
+  height: 400px;
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  display: table;
+}
+
+div.content {
+  display: table-cell;
+  vertical-align: middle;
+}

@@ -1,76 +1,112 @@
-import { useState } from "react";
 import NoteContext from "./NoteContext";
+import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NoteState = (props) => {
-  const host = 'http://localhost:5000';
-  const intitalnotes = [];
-  const [notes, setNotes] = useState(intitalnotes);
+  const host = "http://localhost:5000"
+  const notesInitial = []
+  const [notes, setNotes] = useState(notesInitial)
 
-
+  // Get all Notes
   const getNotes = async () => {
+    // API Call 
     const response = await fetch(`${host}/api/notes/fetchallnotes`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'auth-token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNjMmJiZjdlMGM5M2M0OWJmM2U0ZjlmIn0sImlhdCI6MTY3MzcwNjQ4N30.cytWaAqoABohL2rhZxgLMt_RSkNV-fTY7kYIFcmzlNM"
-      },
+        "auth-token": localStorage.getItem('token')
+      }
     });
-    const json = await response.json();
+    const json = await response.json()
     setNotes(json)
   }
 
+  // Add a Note
   const addNote = async (title, description) => {
-    const response = await fetch(`${host}api/notes/addnote`, {
+    // TODO: API Call
+    // API Call 
+    const response = await fetch(`${host}/api/notes/addnote`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'auth-token': ""
+        "auth-token": localStorage.getItem('token')
       },
-      body: JSON.stringify({title, description})
+      body: JSON.stringify({ title, description })
     });
-    const json = await response.json();
 
-    const note = {
-      "_id": "c1212292e8997a90644d81e6b24",
-      "user": "63c1212707e1d3f8fc5d9d648f",
-      "title": title,
-      "description": description,
-      "tag": "Personal",
-      "date": "2023-01-14T11:32:56.522Z",
-      "__v": 0
-    }
-    setNotes(notes.concat(note));
+    const note = await response.json();
+    setNotes(notes.concat(note))
   }
 
-  const deleteNote = (id) => {
-    const newNotes = notes.filter((note) => { return note._id != id })
-    setNotes(newNotes);
+  // Delete a Note
+  const deleteNote = async (id) => {
+    // API Call
+    const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        "auth-token": localStorage.getItem('token')
+      }
+    });
+    const json = response.json();
+    const newNotes = notes.filter((note) => { return note._id !== id })
+    setNotes(newNotes)
+    toast.error('Note Deleted', {
+      position: "bottom-center",
+      autoClose: 100,
+      limit : 1,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 
+  // Edit a Note
   const editNote = async (id, title, description) => {
-
+    // API Call 
     const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'auth-token': ""
+        "auth-token": localStorage.getItem('token')
       },
-      body: JSON.stringify(title, description)
+      body: JSON.stringify({ title, description })
     });
     const json = await response.json();
 
-    for (let i = 0; i < notes.length; i++) {
-      const ele = notes[i];
-      if (ele._id === id) {
-        ele.title = title;
-        ele.description = description;
+    let newNotes = JSON.parse(JSON.stringify(notes))
+    // Logic to edit in client
+    for (let index = 0; index < newNotes.length; index++) {
+      const element = newNotes[index];
+      if (element._id === id) {
+        newNotes[index].title = title;
+        newNotes[index].description = description;
+        break;
       }
     }
+    setNotes(newNotes);
+    toast.success('Note Updated', {
+      position: "bottom-center",
+      autoClose: 100,
+      limit : 1,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 
+
   return (
-    <NoteContext.Provider value={{ notes, addNote, deleteNote, getNotes }}>
+    <NoteContext.Provider value={{ notes, addNote, deleteNote, editNote, getNotes }}>
       {props.children}
+      <ToastContainer />
     </NoteContext.Provider>
   )
 

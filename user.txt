@@ -1,0 +1,7 @@
+// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNjNTVkMDZmMDUwYjc1MDAxMTVjYTE5In0sImlhdCI6MTY3Mzg3ODc5MH0.7Yf946N-c9ei-LAi_LJK-6fEPlGOcOwSPkxf0C2o0V0"
+
+// {
+//   "name": "yash",
+//   "email": "yash@gmail.com",
+//   "password": "12345"
+// }
