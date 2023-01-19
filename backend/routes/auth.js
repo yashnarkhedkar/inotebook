@@ -91,8 +91,6 @@ router.post('/login', [
     console.error(error.message);
     res.status(500).send("Internal Server Error");
   }
-
-
 });
 
 // ROUTE 3: Get loggedin User Details using: POST "/api/auth/getuser". Login required
